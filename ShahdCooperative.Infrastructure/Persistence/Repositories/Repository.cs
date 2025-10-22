@@ -51,4 +51,9 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         _dbSet.Update(entity);
         return Task.CompletedTask;
     }
+
+    public virtual async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dbSet.AnyAsync(e => e.Id == id, cancellationToken);
+    }
 }

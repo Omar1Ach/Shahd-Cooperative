@@ -1,0 +1,147 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.cs text diff=csharp
+*.csx text diff=csharp
+*.vb text
+*.vbx text
+*.c text diff=cpp
+*.cpp text diff=cpp
+*.cxx text diff=cpp
+*.h text diff=cpp
+*.hxx text diff=cpp
+*.py text diff=python
+*.java text diff=java
+*.html text diff=html
+*.css text diff=css
+*.js text
+*.sql text
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Documentation
+*.md text
+*.txt text
+*.adoc text
+*.textile text
+*.mustache text
+*.csv text
+*.tab text
+*.tsv text
+*.rst text
+
+# Config files
+*.json text
+*.xml text
+*.yml text
+*.yaml text
+*.toml text
+*.ini text
+*.config text
+.editorconfig text
+.gitattributes text
+.gitconfig text
+.gitignore text
+
+# Graphics
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+*.eps binary
+*.ai binary
+*.psd binary
+
+# Archives
+*.7z binary
+*.gz binary
+*.tar binary
+*.zip binary
+*.rar binary
+
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# RC files (resources)
+*.rc text
+
+# Compiled Object files
+*.slo binary
+*.lo binary
+*.o binary
+*.obj binary
+
+# Precompiled Headers
+*.gch binary
+*.pch binary
+
+# Compiled Dynamic libraries
+*.so binary
+*.dylib binary
+*.dll binary
+
+# Compiled Static libraries
+*.lai binary
+*.la binary
+*.a binary
+*.lib binary
+
+# NuGet
+*.nupkg binary
+
+# Fonts
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+
+# Visual Studio
+*.sln text eol=crlf
+*.csproj text eol=crlf
+*.vbproj text eol=crlf
+*.vcxproj text eol=crlf
+*.vcproj text eol=crlf
+*.dbproj text eol=crlf
+*.fsproj text eol=crlf
+*.lsproj text eol=crlf
+*.wixproj text eol=crlf
+*.modelproj text eol=crlf
+*.sqlproj text eol=crlf
+*.wwaproj text eol=crlf
+
+# Visual Studio Solution
+*.sln text eol=crlf merge=union
+*.csproj merge=union
+*.vbproj merge=union
+*.fsproj merge=union
+*.dbproj merge=union
+
+# Roslyn
+*.ruleset text
+
+# StyleCop
+*.StyleCop text
+
+# MSBuild
+*.targets text
+*.props text
+
+# Mono
+*.pidb binary
+
+# Unity
+*.unityproj text eol=crlf
+*.prefab text
+*.unity text
+
+# .NET Core
+*.xproj text eol=crlf
+project.json text eol=crlf

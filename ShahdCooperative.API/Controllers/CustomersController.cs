@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShahdCooperative.Application.DTOs.Customers;
 using ShahdCooperative.Application.Features.Customers.Commands.CreateCustomer;
@@ -11,6 +12,7 @@ namespace ShahdCooperative.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Policy = "AdminOnly")] // Customer management is Admin-only
 public class CustomersController : ControllerBase
 {
     private readonly IMediator _mediator;

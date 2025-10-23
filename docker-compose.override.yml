@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    volumes:
+      - ./Logs:/app/Logs
+    ports:
+      - "5000:8080"
+
+  sqlserver:
+    ports:
+      - "1433:1433"
+
+  elasticsearch:
+    ports:
+      - "9200:9200"
+
+  kibana:
+    ports:
+      - "5601:5601"

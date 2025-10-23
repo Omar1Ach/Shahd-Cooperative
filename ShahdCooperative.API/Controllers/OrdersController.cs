@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShahdCooperative.Application.DTOs.Orders;
 using ShahdCooperative.Application.Features.Orders.Commands.CreateOrder;
@@ -9,6 +10,7 @@ namespace ShahdCooperative.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Policy = "CustomerOrAdmin")] // Orders require Customer or Admin role
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;

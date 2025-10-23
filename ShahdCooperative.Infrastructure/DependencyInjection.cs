@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShahdCooperative.Domain.Interfaces.Repositories;
+using ShahdCooperative.Domain.Interfaces.Services;
+using ShahdCooperative.Infrastructure.ExternalServices;
 using ShahdCooperative.Infrastructure.Persistence;
 using ShahdCooperative.Infrastructure.Persistence.Repositories;
 
@@ -28,6 +30,10 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Register external services with HttpClient
+        services.AddHttpClient<IAuthService, AuthService>();
+        services.AddHttpClient<INotificationService, NotificationService>();
 
         return services;
     }

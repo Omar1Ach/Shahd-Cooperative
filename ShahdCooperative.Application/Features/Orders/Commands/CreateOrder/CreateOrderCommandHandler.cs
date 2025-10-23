@@ -33,56 +33,36 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
         if (customer == null)
             return Result<OrderDto>.Failure("Customer not found", "CUSTOMER_NOT_FOUND");
 
-        // Validate all products exist and calculate totals
-        decimal totalAmount = 0;
-        var orderItems = new List<OrderItem>();
+        // Create order using factory method
+        var order = Order.Create(
+            request.Order.CustomerId,
+            "USD",
+            request.Order.ShippingStreet,
+            request.Order.ShippingCity,
+            request.Order.ShippingState,
+            request.Order.ShippingPostalCode,
+            request.Order.ShippingCountry);
 
+        // Add items to order
         foreach (var itemDto in request.Order.OrderItems)
         {
             var product = await _productRepository.GetByIdAsync(itemDto.ProductId, cancellationToken);
             if (product == null)
                 return Result<OrderDto>.Failure($"Product {itemDto.ProductId} not found", "PRODUCT_NOT_FOUND");
 
-            if (product.StockQuantity < itemDto.Quantity)
-                return Result<OrderDto>.Failure($"Insufficient stock for product {product.Name}", "INSUFFICIENT_STOCK");
-
-            var orderItem = new OrderItem
+            try
             {
-                Id = Guid.NewGuid(),
-                ProductId = itemDto.ProductId,
-                Quantity = itemDto.Quantity,
-                UnitPrice = product.Price,
-                Currency = product.Currency,
-                Discount = 0,
-                Subtotal = product.Price * itemDto.Quantity,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-
-            orderItems.Add(orderItem);
-            totalAmount += orderItem.Subtotal;
+                order.AddItem(product, itemDto.Quantity, product.Price);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result<OrderDto>.Failure(ex.Message, "BUSINESS_RULE_VIOLATION");
+            }
         }
-
-        // Create order
-        var order = _mapper.Map<Order>(request.Order);
-        order.Id = Guid.NewGuid();
-        order.OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8).ToUpper()}";
-        order.TotalAmount = totalAmount;
-        order.CreatedAt = DateTime.UtcNow;
-        order.UpdatedAt = DateTime.UtcNow;
 
         var createdOrder = await _orderRepository.AddAsync(order, cancellationToken);
 
-        // Add order items
-        foreach (var item in orderItems)
-        {
-            item.OrderId = createdOrder.Id;
-            // Note: In a real application, you'd have an OrderItemRepository
-            // For now, this assumes the repository handles cascading inserts
-        }
-
         var orderDto = _mapper.Map<OrderDto>(createdOrder);
-        orderDto.OrderItems = _mapper.Map<List<OrderItemDto>>(orderItems);
 
         return Result<OrderDto>.Success(orderDto);
     }

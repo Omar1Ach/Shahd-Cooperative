@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShahdCooperative.Domain.Interfaces.Repositories;
+using ShahdCooperative.Domain.Services;
 using ShahdCooperative.Infrastructure.Persistence;
 using ShahdCooperative.Infrastructure.Persistence.Repositories;
 
@@ -28,6 +29,11 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Register Domain Services
+        services.AddScoped<IInventoryDomainService, InventoryDomainService>();
+        services.AddScoped<IOrderDomainService, OrderDomainService>();
+        services.AddScoped<IPricingDomainService, PricingDomainService>();
 
         return services;
     }

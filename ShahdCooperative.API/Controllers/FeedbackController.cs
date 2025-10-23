@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShahdCooperative.Application.DTOs.Feedback;
 using ShahdCooperative.Application.Features.Feedback.Commands.CreateFeedback;
@@ -10,6 +11,7 @@ namespace ShahdCooperative.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Policy = "CustomerOrAdmin")] // Feedback requires authentication
 public class FeedbackController : ControllerBase
 {
     private readonly IMediator _mediator;

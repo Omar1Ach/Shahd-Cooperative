@@ -1,6 +1,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using ShahdCooperative.Application.Behaviors;
 using ShahdCooperative.Application.Common.Behaviors;
 
 namespace ShahdCooperative.Application;
@@ -18,6 +19,7 @@ public static class DependencyInjection
         // Register Pipeline Behaviors
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
         return services;
     }

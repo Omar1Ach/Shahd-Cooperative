@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShahdCooperative.Application.DTOs.Products;
 using ShahdCooperative.Application.Features.Products.Commands.CreateProduct;
@@ -11,6 +12,7 @@ namespace ShahdCooperative.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize] // All endpoints require authentication
 public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -56,6 +58,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")] // Only admins can create products
     public async Task<IActionResult> CreateProduct(
         [FromBody] CreateProductDto dto,
         CancellationToken cancellationToken)
@@ -75,6 +78,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")] // Only admins can update products
     public async Task<IActionResult> UpdateProduct(
         Guid id,
         [FromBody] UpdateProductDto dto,
@@ -100,6 +104,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")] // Only admins can delete products
     public async Task<IActionResult> DeleteProduct(Guid id, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Deleting product {ProductId}", id);

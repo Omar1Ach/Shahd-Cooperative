@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShahdCooperative.Domain.Interfaces.Repositories;
+using ShahdCooperative.Infrastructure.Messaging;
 using ShahdCooperative.Infrastructure.Persistence;
 using ShahdCooperative.Infrastructure.Persistence.Repositories;
 
@@ -28,6 +29,10 @@ public static class DependencyInjection
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Register RabbitMQ services
+        services.AddSingleton<RabbitMQConnection>();
+        services.AddSingleton<MessagePublisher>();
 
         return services;
     }

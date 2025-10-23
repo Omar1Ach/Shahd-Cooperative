@@ -1,4 +1,5 @@
 using Serilog;
+using ShahdCooperative.API.Middleware;
 using ShahdCooperative.Application;
 using ShahdCooperative.Infrastructure;
 
@@ -14,6 +15,17 @@ builder.Host.UseSerilog();
 // Add Application and Infrastructure layers
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // Add controllers
 builder.Services.AddControllers();
@@ -31,6 +43,8 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure HTTP pipeline
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -43,6 +57,8 @@ if (app.Environment.IsDevelopment())
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 

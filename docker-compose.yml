@@ -7,7 +7,7 @@ services:
     container_name: shahdcooperative-sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
       - MSSQL_PID=Developer
     ports:
       - "1433:1433"
@@ -16,7 +16,7 @@ services:
     networks:
       - shahdcooperative-network
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q "SELECT 1" -C || exit 1
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P YourStrong!Passw0rd -Q "SELECT 1" -C || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
@@ -71,11 +71,11 @@ services:
       dockerfile: Dockerfile
     container_name: shahdcooperative-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ShahdCooperative;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ShahdCooperative;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
       - ElasticsearchSettings__Uri=http://elasticsearch:9200
-      - JwtSettings__SecretKey=YourSuperSecretKeyForDevelopment_MustBeAtLeast32Characters!
+      - JwtSettings__SecretKey=YourSuperSecretKeyForProduction_MustBeAtLeast32Characters!
       - JwtSettings__Issuer=ShahdCooperativeAuthService
       - JwtSettings__Audience=ShahdCooperativeAPI
       - Serilog__WriteTo__1__Args__nodeUris=http://elasticsearch:9200

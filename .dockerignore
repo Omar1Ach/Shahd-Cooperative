@@ -23,5 +23,13 @@
 **/values.dev.yaml
 LICENSE
 README.md
-Logs/
+!**/.gitignore
+!.git/HEAD
+!.git/config
+!.git/packed-refs
+!.git/refs/heads/**
+**/appsettings.Development.json
+**/appsettings.*.json
+**/*.Tests
+**/Logs
 *.log

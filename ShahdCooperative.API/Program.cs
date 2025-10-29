@@ -19,7 +19,7 @@ builder.Host.UseSerilog();
 
 // Add Application and Infrastructure layers
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.EnvironmentName);
 
 // Add HttpContextAccessor for CurrentUserService
 builder.Services.AddHttpContextAccessor();
@@ -156,3 +156,6 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+// Make Program accessible to integration tests
+public partial class Program { }

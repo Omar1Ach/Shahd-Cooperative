@@ -2,6 +2,8 @@
 
 public enum ProductType
 {
-    BeeProduct,
-    Equipment
+    Honey,
+    BeeswaxProduct,
+    Equipment,
+    Other
 }

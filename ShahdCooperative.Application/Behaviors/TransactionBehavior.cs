@@ -46,6 +46,8 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
 
             var response = await next();
 
+            // Save changes to database before committing transaction
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
             _logger.LogInformation("Transaction committed successfully for {RequestName}", requestName);

@@ -15,13 +15,17 @@ namespace ShahdCooperative.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services, IConfiguration configuration)
+        this IServiceCollection services, IConfiguration configuration, string? environment = null)
     {
-        // Add DbContext for entity tracking and change detection
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+        // Skip SQL Server registration in Testing environment (integration tests will configure InMemory database)
+        if (environment != "Testing")
+        {
+            // Add DbContext for entity tracking and change detection
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+        }
 
         // Add Dapper context for high-performance queries
         services.AddSingleton<DapperContext>();
@@ -44,8 +48,12 @@ public static class DependencyInjection
         services.AddScoped<IEventHandler<UserLoggedInEvent>, UserLoggedInEventHandler>();
         services.AddScoped<IEventHandler<UserLoggedOutEvent>, UserLoggedOutEventHandler>();
 
-        // Register RabbitMQ Consumer as Hosted Service
-        services.AddHostedService<RabbitMQConsumer>();
+        // Skip RabbitMQ hosted service in Testing environment
+        if (environment != "Testing")
+        {
+            // Register RabbitMQ Consumer as Hosted Service
+            services.AddHostedService<RabbitMQConsumer>();
+        }
 
         // Register RabbitMQ Publisher as Singleton
         services.AddSingleton<IEventPublisher, RabbitMQPublisher>();

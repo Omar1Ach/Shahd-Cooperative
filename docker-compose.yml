@@ -64,6 +64,28 @@ services:
       retries: 5
       start_period: 60s
 
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: shahdcooperative-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - shahdcooperative-network
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
   # ShahdCooperative API
   api:
     build:
@@ -78,6 +100,12 @@ services:
       - JwtSettings__SecretKey=YourSuperSecretKeyForProduction_MustBeAtLeast32Characters!
       - JwtSettings__Issuer=ShahdCooperativeAuthService
       - JwtSettings__Audience=ShahdCooperativeAPI
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Port=5672
+      - RabbitMQ__Username=admin
+      - RabbitMQ__Password=admin123
+      - RabbitMQ__VirtualHost=/
+      - RabbitMQ__Exchange=shahdcooperative.events
       - Serilog__WriteTo__1__Args__nodeUris=http://elasticsearch:9200
     ports:
       - "5000:8080"
@@ -87,6 +115,8 @@ services:
       sqlserver:
         condition: service_healthy
       elasticsearch:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     healthcheck:
       test: curl -f http://localhost:8080/health || exit 1
@@ -103,4 +133,6 @@ volumes:
   sqlserver_data:
     driver: local
   elasticsearch_data:
+    driver: local
+  rabbitmq_data:
     driver: local

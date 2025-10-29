@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 using ShahdCooperative.Domain.Services;
+using ShahdCooperative.Infrastructure.MessageBroker;
+using ShahdCooperative.Infrastructure.MessageBroker.Events;
+using ShahdCooperative.Infrastructure.MessageBroker.Handlers;
 using ShahdCooperative.Infrastructure.Persistence;
 using ShahdCooperative.Infrastructure.Persistence.Repositories;
 
@@ -34,6 +37,14 @@ public static class DependencyInjection
         services.AddScoped<IInventoryDomainService, InventoryDomainService>();
         services.AddScoped<IOrderDomainService, OrderDomainService>();
         services.AddScoped<IPricingDomainService, PricingDomainService>();
+
+        // Register RabbitMQ Event Handlers
+        services.AddScoped<IEventHandler<UserRegisteredEvent>, UserRegisteredEventHandler>();
+        services.AddScoped<IEventHandler<UserLoggedInEvent>, UserLoggedInEventHandler>();
+        services.AddScoped<IEventHandler<UserLoggedOutEvent>, UserLoggedOutEventHandler>();
+
+        // Register RabbitMQ Consumer as Hosted Service
+        services.AddHostedService<RabbitMQConsumer>();
 
         return services;
     }

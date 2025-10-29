@@ -27,7 +27,7 @@ public class DeleteProductCommandHandlerTests
             name: "Test Honey",
             sku: "HON-001",
             category: "Honey",
-            type: ProductType.BeeProduct,
+            type: ProductType.Honey,
             price: 19.99m,
             currency: "USD",
             stockQuantity: 100,

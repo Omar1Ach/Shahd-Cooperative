@@ -28,8 +28,8 @@ public class GetProductsQueryHandlerTests
         var query = new GetProductsQuery();
         var products = new List<Product>
         {
-            Product.Create("Honey", "HON-001", "Honey", ProductType.BeeProduct, 19.99m, "USD", 100, 10),
-            Product.Create("Beeswax", "BEE-001", "Wax", ProductType.BeeProduct, 14.99m, "USD", 50, 5)
+            Product.Create("Honey", "HON-001", "Honey", ProductType.Honey, 19.99m, "USD", 100, 10),
+            Product.Create("Beeswax", "BEE-001", "Wax", ProductType.BeeswaxProduct, 14.99m, "USD", 50, 5)
         };
 
         var productDtos = new List<ProductDto>

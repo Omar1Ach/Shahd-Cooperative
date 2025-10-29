@@ -1,9 +1,11 @@
 using AutoMapper;
 using Moq;
 using ShahdCooperative.Application.DTOs.Orders;
+using ShahdCooperative.Application.Events;
 using ShahdCooperative.Application.Features.Orders.Commands.CreateOrder;
 using ShahdCooperative.Domain.Entities;
 using ShahdCooperative.Domain.Enums;
+using ShahdCooperative.Domain.Interfaces;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Orders.Commands;
@@ -14,6 +16,7 @@ public class CreateOrderCommandHandlerTests
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<ICustomerRepository> _mockCustomerRepository;
     private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IEventPublisher> _mockEventPublisher;
     private readonly CreateOrderCommandHandler _handler;
 
     public CreateOrderCommandHandlerTests()
@@ -22,11 +25,13 @@ public class CreateOrderCommandHandlerTests
         _mockProductRepository = new Mock<IProductRepository>();
         _mockCustomerRepository = new Mock<ICustomerRepository>();
         _mockMapper = new Mock<IMapper>();
+        _mockEventPublisher = new Mock<IEventPublisher>();
         _handler = new CreateOrderCommandHandler(
             _mockOrderRepository.Object,
             _mockProductRepository.Object,
             _mockCustomerRepository.Object,
-            _mockMapper.Object);
+            _mockMapper.Object,
+            _mockEventPublisher.Object);
     }
 
     [Fact]
@@ -80,6 +85,7 @@ public class CreateOrderCommandHandlerTests
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
         _mockOrderRepository.Verify(x => x.AddAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockEventPublisher.Verify(x => x.PublishAsync("order.created", It.IsAny<OrderCreatedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

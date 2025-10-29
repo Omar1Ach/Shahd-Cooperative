@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ShahdCooperative.Domain.Interfaces;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 using ShahdCooperative.Domain.Services;
 using ShahdCooperative.Infrastructure.MessageBroker;
@@ -45,6 +46,9 @@ public static class DependencyInjection
 
         // Register RabbitMQ Consumer as Hosted Service
         services.AddHostedService<RabbitMQConsumer>();
+
+        // Register RabbitMQ Publisher as Singleton
+        services.AddSingleton<IEventPublisher, RabbitMQPublisher>();
 
         return services;
     }

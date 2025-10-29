@@ -1,9 +1,11 @@
 using AutoMapper;
 using Moq;
 using ShahdCooperative.Application.DTOs.Products;
+using ShahdCooperative.Application.Events;
 using ShahdCooperative.Application.Features.Products.Commands.UpdateProduct;
 using ShahdCooperative.Domain.Entities;
 using ShahdCooperative.Domain.Enums;
+using ShahdCooperative.Domain.Interfaces;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Products.Commands;
@@ -12,13 +14,15 @@ public class UpdateProductCommandHandlerTests
 {
     private readonly Mock<IProductRepository> _mockRepository;
     private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IEventPublisher> _mockEventPublisher;
     private readonly UpdateProductCommandHandler _handler;
 
     public UpdateProductCommandHandlerTests()
     {
         _mockRepository = new Mock<IProductRepository>();
         _mockMapper = new Mock<IMapper>();
-        _handler = new UpdateProductCommandHandler(_mockRepository.Object, _mockMapper.Object);
+        _mockEventPublisher = new Mock<IEventPublisher>();
+        _handler = new UpdateProductCommandHandler(_mockRepository.Object, _mockMapper.Object, _mockEventPublisher.Object);
     }
 
     [Fact]

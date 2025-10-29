@@ -1,8 +1,10 @@
 using AutoMapper;
 using Moq;
 using ShahdCooperative.Application.DTOs.Feedback;
+using ShahdCooperative.Application.Events;
 using ShahdCooperative.Application.Features.Feedback.Commands.CreateFeedback;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Interfaces;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Feedback.Commands;
@@ -11,18 +13,24 @@ public class CreateFeedbackCommandHandlerTests
 {
     private readonly Mock<IFeedbackRepository> _mockFeedbackRepository;
     private readonly Mock<ICustomerRepository> _mockCustomerRepository;
+    private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IMapper> _mockMapper;
+    private readonly Mock<IEventPublisher> _mockEventPublisher;
     private readonly CreateFeedbackCommandHandler _handler;
 
     public CreateFeedbackCommandHandlerTests()
     {
         _mockFeedbackRepository = new Mock<IFeedbackRepository>();
         _mockCustomerRepository = new Mock<ICustomerRepository>();
+        _mockProductRepository = new Mock<IProductRepository>();
         _mockMapper = new Mock<IMapper>();
+        _mockEventPublisher = new Mock<IEventPublisher>();
         _handler = new CreateFeedbackCommandHandler(
             _mockFeedbackRepository.Object,
             _mockCustomerRepository.Object,
-            _mockMapper.Object);
+            _mockProductRepository.Object,
+            _mockMapper.Object,
+            _mockEventPublisher.Object);
     }
 
     [Fact]
@@ -57,6 +65,7 @@ public class CreateFeedbackCommandHandlerTests
         Assert.NotNull(result.Value);
         Assert.Equal(5, result.Value.Rating);
         _mockFeedbackRepository.Verify(x => x.AddAsync(It.IsAny<Domain.Entities.Feedback>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mockEventPublisher.Verify(x => x.PublishAsync("feedback.received", It.IsAny<FeedbackReceivedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

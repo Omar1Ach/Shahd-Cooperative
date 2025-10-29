@@ -1,8 +1,10 @@
 using AutoMapper;
 using MediatR;
 using ShahdCooperative.Application.DTOs.Orders;
+using ShahdCooperative.Application.Events;
 using ShahdCooperative.Domain.Common;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Interfaces;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Features.Orders.Commands.CreateOrder;
@@ -13,17 +15,20 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
     private readonly IProductRepository _productRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IMapper _mapper;
+    private readonly IEventPublisher _eventPublisher;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         ICustomerRepository customerRepository,
-        IMapper mapper)
+        IMapper mapper,
+        IEventPublisher eventPublisher)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
         _customerRepository = customerRepository;
         _mapper = mapper;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<Result<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -63,6 +68,22 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Res
         var createdOrder = await _orderRepository.AddAsync(order, cancellationToken);
 
         var orderDto = _mapper.Map<OrderDto>(createdOrder);
+
+        // Publish OrderCreatedEvent to RabbitMQ for NotificationService
+        var orderCreatedEvent = new OrderCreatedEvent
+        {
+            OrderId = createdOrder.Id,
+            CustomerId = customer.Id,
+            CustomerEmail = customer.Email,
+            CustomerName = customer.Name,
+            TotalAmount = createdOrder.TotalAmount,
+            Currency = "USD",
+            ItemCount = createdOrder.OrderItems.Count,
+            ShippingAddress = $"{createdOrder.ShippingStreet}, {createdOrder.ShippingCity}, {createdOrder.ShippingState} {createdOrder.ShippingPostalCode}, {createdOrder.ShippingCountry}",
+            CreatedAt = createdOrder.CreatedAt
+        };
+
+        await _eventPublisher.PublishAsync("order.created", orderCreatedEvent, cancellationToken);
 
         return Result<OrderDto>.Success(orderDto);
     }

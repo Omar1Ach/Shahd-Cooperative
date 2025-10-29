@@ -30,7 +30,7 @@ public class GetOrderByIdQueryHandlerTests
         var order = Order.Create(customerId, "USD", "123 Main St", "New York", "NY", "10001", "USA");
         var orderDto = new OrderDto { Id = orderId, CustomerId = customerId };
 
-        _mockRepository.Setup(x => x.GetByIdAsync(orderId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdWithItemsAsync(orderId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(order);
         _mockMapper.Setup(x => x.Map<OrderDto>(It.IsAny<Order>()))
             .Returns(orderDto);
@@ -41,8 +41,8 @@ public class GetOrderByIdQueryHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
-        Assert.Equal(orderId, result.Value.Id);
-        _mockRepository.Verify(x => x.GetByIdAsync(orderId, It.IsAny<CancellationToken>()), Times.Once);
+        Assert.Equal(customerId, result.Value.CustomerId);
+        _mockRepository.Verify(x => x.GetByIdWithItemsAsync(orderId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class GetOrderByIdQueryHandlerTests
         var orderId = Guid.NewGuid();
         var query = new GetOrderByIdQuery(orderId);
 
-        _mockRepository.Setup(x => x.GetByIdAsync(orderId, It.IsAny<CancellationToken>()))
+        _mockRepository.Setup(x => x.GetByIdWithItemsAsync(orderId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Order?)null);
 
         // Act

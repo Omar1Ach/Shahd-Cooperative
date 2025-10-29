@@ -3,6 +3,7 @@ using Moq;
 using ShahdCooperative.Application.DTOs.Products;
 using ShahdCooperative.Application.Features.Products.Queries.GetProducts;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Enums;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Products.Queries;
@@ -27,8 +28,8 @@ public class GetProductsQueryHandlerTests
         var query = new GetProductsQuery();
         var products = new List<Product>
         {
-            new Mock<Product>().Object,
-            new Mock<Product>().Object
+            Product.Create("Honey", "HON-001", "Honey", ProductType.BeeProduct, 19.99m, "USD", 100, 10),
+            Product.Create("Beeswax", "BEE-001", "Wax", ProductType.BeeProduct, 14.99m, "USD", 50, 5)
         };
 
         var productDtos = new List<ProductDto>

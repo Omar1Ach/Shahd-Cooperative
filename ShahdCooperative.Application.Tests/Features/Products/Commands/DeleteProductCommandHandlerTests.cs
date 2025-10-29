@@ -1,6 +1,7 @@
 using Moq;
 using ShahdCooperative.Application.Features.Products.Commands.DeleteProduct;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Enums;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Products.Commands;
@@ -22,7 +23,15 @@ public class DeleteProductCommandHandlerTests
         // Arrange
         var productId = Guid.NewGuid();
         var command = new DeleteProductCommand(productId);
-        var product = new Mock<Product>().Object;
+        var product = Product.Create(
+            name: "Test Honey",
+            sku: "HON-001",
+            category: "Honey",
+            type: ProductType.BeeProduct,
+            price: 19.99m,
+            currency: "USD",
+            stockQuantity: 100,
+            thresholdLevel: 10);
 
         _mockRepository.Setup(x => x.GetByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);

@@ -3,6 +3,7 @@ using Moq;
 using ShahdCooperative.Application.DTOs.Orders;
 using ShahdCooperative.Application.Features.Orders.Commands.CreateOrder;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Enums;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Orders.Commands;
@@ -51,10 +52,15 @@ public class CreateOrderCommandHandlerTests
 
         var command = new CreateOrderCommand(dto);
         var customer = Customer.Create("auth123", "John Doe", "john@example.com");
-        var mockProduct = new Mock<Product>();
-        mockProduct.Setup(p => p.Id).Returns(productId);
-        mockProduct.Setup(p => p.Price).Returns(19.99m);
-        var product = mockProduct.Object;
+        var product = Product.Create(
+            name: "Test Honey",
+            sku: "HON-001",
+            category: "Honey",
+            type: ProductType.BeeProduct,
+            price: 19.99m,
+            currency: "USD",
+            stockQuantity: 100,
+            thresholdLevel: 10);
         var order = Order.Create(customerId, "USD", "123 Main St", "New York", "NY", "10001", "USA");
         var orderDto = new OrderDto { Id = Guid.NewGuid(), CustomerId = customerId };
 
@@ -63,7 +69,7 @@ public class CreateOrderCommandHandlerTests
         _mockProductRepository.Setup(x => x.GetByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
         _mockOrderRepository.Setup(x => x.AddAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(order);
+            .ReturnsAsync((Order o, CancellationToken ct) => o);
         _mockMapper.Setup(x => x.Map<OrderDto>(It.IsAny<Order>()))
             .Returns(orderDto);
 

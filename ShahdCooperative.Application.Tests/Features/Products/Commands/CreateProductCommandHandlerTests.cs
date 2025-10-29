@@ -3,6 +3,7 @@ using Moq;
 using ShahdCooperative.Application.DTOs.Products;
 using ShahdCooperative.Application.Features.Products.Commands.CreateProduct;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Enums;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Products.Commands;
@@ -38,13 +39,22 @@ public class CreateProductCommandHandlerTests
         };
 
         var command = new CreateProductCommand(dto);
-        var product = new Mock<Product>().Object;
+        var product = Product.Create(
+            name: dto.Name,
+            sku: dto.SKU,
+            category: dto.Category,
+            type: ProductType.Equipment,
+            price: dto.Price,
+            currency: dto.Currency,
+            stockQuantity: dto.StockQuantity,
+            thresholdLevel: dto.ThresholdLevel,
+            description: dto.Description);
         var productDto = new ProductDto { Id = Guid.NewGuid(), Name = dto.Name, Price = dto.Price };
 
         _mockMapper.Setup(x => x.Map<Product>(It.IsAny<CreateProductDto>()))
             .Returns(product);
         _mockRepository.Setup(x => x.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(product);
+            .ReturnsAsync((Product p, CancellationToken ct) => p);
         _mockMapper.Setup(x => x.Map<ProductDto>(It.IsAny<Product>()))
             .Returns(productDto);
 

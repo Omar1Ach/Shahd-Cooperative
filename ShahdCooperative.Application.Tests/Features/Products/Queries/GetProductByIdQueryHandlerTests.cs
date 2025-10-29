@@ -3,6 +3,7 @@ using Moq;
 using ShahdCooperative.Application.DTOs.Products;
 using ShahdCooperative.Application.Features.Products.Queries.GetProductById;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Enums;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Products.Queries;
@@ -26,7 +27,16 @@ public class GetProductByIdQueryHandlerTests
         // Arrange
         var productId = Guid.NewGuid();
         var query = new GetProductByIdQuery(productId);
-        var product = new Mock<Product>().Object;
+        var product = Product.Create(
+            name: "Test Honey",
+            sku: "TEST-001",
+            category: "Honey",
+            type: ProductType.BeeProduct,
+            price: 19.99m,
+            currency: "USD",
+            stockQuantity: 100,
+            thresholdLevel: 10,
+            description: "Test description");
         var productDto = new ProductDto { Id = productId, Name = "Test Honey", Price = 19.99m };
 
         _mockRepository.Setup(x => x.GetByIdAsync(productId, It.IsAny<CancellationToken>()))

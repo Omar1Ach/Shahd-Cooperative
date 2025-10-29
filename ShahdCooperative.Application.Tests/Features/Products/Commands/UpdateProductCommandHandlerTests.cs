@@ -3,6 +3,7 @@ using Moq;
 using ShahdCooperative.Application.DTOs.Products;
 using ShahdCooperative.Application.Features.Products.Commands.UpdateProduct;
 using ShahdCooperative.Domain.Entities;
+using ShahdCooperative.Domain.Enums;
 using ShahdCooperative.Domain.Interfaces.Repositories;
 
 namespace ShahdCooperative.Application.Tests.Features.Products.Commands;
@@ -38,7 +39,15 @@ public class UpdateProductCommandHandlerTests
         };
 
         var command = new UpdateProductCommand(dto);
-        var product = new Mock<Product>().Object;
+        var product = Product.Create(
+            name: "Original Honey",
+            sku: "HON-001",
+            category: "Honey",
+            type: ProductType.BeeProduct,
+            price: 19.99m,
+            currency: "USD",
+            stockQuantity: 100,
+            thresholdLevel: 10);
         var productDto = new ProductDto { Id = productId, Name = dto.Name, Price = dto.Price };
 
         _mockRepository.Setup(x => x.GetByIdAsync(productId, It.IsAny<CancellationToken>()))

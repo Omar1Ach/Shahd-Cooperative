@@ -7,7 +7,7 @@ services:
     container_name: shahdcooperative-sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+      - MSSQL_SA_PASSWORD=Omar123@
       - MSSQL_PID=Developer
     ports:
       - "1433:1433"
@@ -16,7 +16,7 @@ services:
     networks:
       - shahdcooperative-network
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P YourStrong!Passw0rd -Q "SELECT 1" -C || exit 1
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Omar123@ -Q "SELECT 1" -C || exit 1
       interval: 10s
       timeout: 5s
       retries: 5
@@ -73,7 +73,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ShahdCooperative;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=ShahdCooperative;User Id=sa;Password=Omar123@;TrustServerCertificate=True;MultipleActiveResultSets=true
       - ElasticsearchSettings__Uri=http://elasticsearch:9200
       - JwtSettings__SecretKey=YourSuperSecretKeyForProduction_MustBeAtLeast32Characters!
       - JwtSettings__Issuer=ShahdCooperativeAuthService

@@ -12,7 +12,9 @@ public class ProductRepository : Repository<Product>, IProductRepository
     public async Task<IEnumerable<Product>> GetByTypeAsync(
         ProductType type, CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(p => p.Type == type).ToListAsync(cancellationToken);
+        // Convert enum to string for comparison with database NVARCHAR column
+        var typeString = type.ToString();
+        return await _dbSet.Where(p => p.Type == typeString).ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Product>> GetByCategoryAsync(

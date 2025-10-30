@@ -14,7 +14,10 @@ public class Product : BaseEntity
     public string Currency { get; private set; } = "USD";
     public int StockQuantity { get; private set; }
     public int ThresholdLevel { get; private set; }
-    public ProductType Type { get; private set; }
+
+    // Store as STRING in database (NVARCHAR column)
+    public string Type { get; private set; } = nameof(ProductType.Honey);
+
     public string? ImageUrl { get; private set; }
     public bool IsActive { get; private set; } = true;
 
@@ -55,7 +58,7 @@ public class Product : BaseEntity
             Name = name,
             SKU = sku,
             Category = category,
-            Type = type,
+            Type = type.ToString(),  // Convert enum to string for database storage
             Price = price,
             Currency = currency,
             StockQuantity = stockQuantity,

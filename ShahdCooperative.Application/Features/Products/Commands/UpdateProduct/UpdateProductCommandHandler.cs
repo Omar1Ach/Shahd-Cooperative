@@ -32,7 +32,37 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
         var oldStockQuantity = existingProduct.StockQuantity;
 
-        _mapper.Map(request.Product, existingProduct);
+        // Use domain business methods instead of AutoMapper
+        existingProduct.UpdateDetails(
+            name: request.Product.Name,
+            category: request.Product.Category,
+            price: request.Product.Price,
+            description: request.Product.Description,
+            imageUrl: request.Product.ImageUrl
+        );
+
+        // Update stock if changed
+        if (existingProduct.StockQuantity != request.Product.StockQuantity)
+        {
+            existingProduct.UpdateStock(request.Product.StockQuantity, "Stock updated via API");
+        }
+
+        // Update threshold level if changed
+        if (existingProduct.ThresholdLevel != request.Product.ThresholdLevel)
+        {
+            existingProduct.UpdateThresholdLevel(request.Product.ThresholdLevel);
+        }
+
+        // Handle active status
+        if (request.Product.IsActive && !existingProduct.IsActive)
+        {
+            existingProduct.Activate();
+        }
+        else if (!request.Product.IsActive && existingProduct.IsActive)
+        {
+            existingProduct.Deactivate();
+        }
+
         await _productRepository.UpdateAsync(existingProduct, cancellationToken);
 
         // Check if stock fell below threshold and publish event
